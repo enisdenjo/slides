@@ -1454,6 +1454,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@slidev/parser@npm:^0.47.4":
+  version: 0.47.5
+  resolution: "@slidev/parser@npm:0.47.5"
+  dependencies:
+    "@slidev/types": "npm:0.47.5"
+    js-yaml: "npm:^4.1.0"
+  checksum: 10c0/9da74d9c65d00325cac0933721f65052a6868074048af5cbaf59c7a355c836b3de1ea4f8dcec50db63882553c786dde5cc41106469b09fdf79c22e50403c2b9d
+  languageName: node
+  linkType: hard
+
 "@slidev/rough-notation@npm:^0.1.0":
   version: 0.1.0
   resolution: "@slidev/rough-notation@npm:0.1.0"
@@ -1471,6 +1481,13 @@ __metadata:
     codemirror-theme-vars: "npm:^0.1.2"
     prism-theme-vars: "npm:^0.2.4"
   checksum: 10c0/cee1a730a2bfa3df3dc87ec4a9aa5046d9249e48db6c217ff67a650e4fd112113f92aa98d7f92d4833b2bca0eb7026db3ff7992d62d36e1a4a10586521fcdd3c
+  languageName: node
+  linkType: hard
+
+"@slidev/types@npm:0.47.5, @slidev/types@npm:^0.47.0":
+  version: 0.47.5
+  resolution: "@slidev/types@npm:0.47.5"
+  checksum: 10c0/28b70a8842618e109b6e377567f813e626c052117240676c37ed6fd8e581ee6081b9a0d55f50e9f3412090cc948403bb8f5590e9b808dd495815b5fed5275f8f
   languageName: node
   linkType: hard
 
@@ -1496,13 +1513,6 @@ __metadata:
     vue: "npm:^3.4.38"
     vue-router: "npm:^4.4.3"
   checksum: 10c0/f66d1acab621b9c4695ec6b58b0586f268806e8c9c10170cacc6824a7b1e0dd2bec4c4b4c44bb4461ac68dd62e22105e2b050d93aa8ccb213af1d045529c0ae4
-  languageName: node
-  linkType: hard
-
-"@slidev/types@npm:^0.47.0":
-  version: 0.47.5
-  resolution: "@slidev/types@npm:0.47.5"
-  checksum: 10c0/28b70a8842618e109b6e377567f813e626c052117240676c37ed6fd8e581ee6081b9a0d55f50e9f3412090cc948403bb8f5590e9b808dd495815b5fed5275f8f
   languageName: node
   linkType: hard
 
@@ -6029,6 +6039,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prettier-plugin-slidev@npm:^1.0.5":
+  version: 1.0.5
+  resolution: "prettier-plugin-slidev@npm:1.0.5"
+  dependencies:
+    "@slidev/parser": "npm:^0.47.4"
+  peerDependencies:
+    prettier: ^3.2.4
+  checksum: 10c0/cb40c11fc63a2257883394efa574883cc53df2dcca8e30b97dee14c37306d8d42ab059bc16c02c84c90d921b716b93fddb62bc96bd966e64d487c3e9fb6650e5
+  languageName: node
+  linkType: hard
+
 "prettier@npm:^3.3.3":
   version: 3.3.3
   resolution: "prettier@npm:3.3.3"
@@ -6507,6 +6528,7 @@ __metadata:
     prettier: "npm:^3.3.3"
     prettier-plugin-pkg: "npm:^0.18.1"
     prettier-plugin-sh: "npm:^0.14.0"
+    prettier-plugin-slidev: "npm:^1.0.5"
     tsx: "npm:^4.19.0"
     typescript: "npm:^5.6.2"
   languageName: unknown
