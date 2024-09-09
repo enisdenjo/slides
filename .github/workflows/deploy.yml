@@ -2,7 +2,11 @@ name: Deploy
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: read
@@ -27,6 +31,8 @@ jobs:
       - run: yarn build
       - uses: actions/configure-pages@v4
       - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
 
   deploy:
     runs-on: ubuntu-latest
@@ -37,3 +43,5 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          preview: ${{ github.ref != 'refs/heads/main' }}

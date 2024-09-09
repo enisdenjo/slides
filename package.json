@@ -1,18 +1,27 @@
 {
   "name": "slides",
+  "type": "module",
   "private": true,
-  "workspaces": [
-    "*"
-  ],
   "packageManager": "yarn@4.4.1",
   "scripts": {
-    "build": "yarn workspaces foreach -A run build",
+    "build": "tsx scripts/build.ts",
     "check:format": "prettier -c .",
-    "format": "yarn check:format -w"
+    "check:type": "tsc --noEmit",
+    "format": "yarn check:format -w",
+    "start": "slidev"
+  },
+  "dependencies": {
+    "@iconify-json/grommet-icons": "^1.2.0",
+    "@slidev/cli": "^0.49.29",
+    "@slidev/theme-default": "^0.25.0",
+    "@tsconfig/node22": "^22.0.0"
   },
   "devDependencies": {
+    "glob": "^11.0.0",
     "prettier": "^3.3.3",
     "prettier-plugin-pkg": "^0.18.1",
-    "prettier-plugin-sh": "^0.14.0"
+    "prettier-plugin-sh": "^0.14.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.2"
   }
 }
