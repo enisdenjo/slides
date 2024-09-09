@@ -6,7 +6,7 @@
   ],
   "packageManager": "yarn@4.4.1",
   "scripts": {
-    "build": "yarn workspaces foreach -A run slidev build -o ../_site/$(basename $(pwd)) --base /$(basename $(pwd))",
+    "build": "yarn workspaces foreach -A run build",
     "check:format": "prettier -c .",
     "format": "yarn check:format -w"
   },
