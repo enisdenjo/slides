@@ -16,11 +16,3 @@ for await (const deck of globIterate('*.md')) {
     stdio: 'inherit',
   });
 }
-
-// merge _redirects
-let allRedirects = '';
-for await (const redirects of globIterate('dist/*/_redirects')) {
-  allRedirects += await fs.readFile(redirects, 'utf8');
-  await fs.rm(redirects);
-}
-await fs.writeFile('dist/_redirects', allRedirects);
