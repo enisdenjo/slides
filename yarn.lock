@@ -803,6 +803,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@iconify-json/grommet-icons@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "@iconify-json/grommet-icons@npm:1.2.0"
+  dependencies:
+    "@iconify/types": "npm:*"
+  checksum: 10c0/b7d0cfbcbd766a91a435fcd1014b262cbccf0e7233b9cdf63b692ca093b62e3dd124588d05b2ca387c4b2de78b8f46bb8895b98ecc5037a14ae2bde41ab920db
+  languageName: node
+  linkType: hard
+
 "@iconify-json/ph@npm:^1.1.14":
   version: 1.2.0
   resolution: "@iconify-json/ph@npm:1.2.0"
@@ -1312,6 +1321,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@slides/spec-agnostic-executor-for-federated-graphql@workspace:spec-agnostic-executor-for-federated-graphql"
   dependencies:
+    "@iconify-json/grommet-icons": "npm:^1.2.0"
     "@slidev/cli": "npm:^0.49.29"
     "@slidev/theme-default": "npm:^0.25.0"
   languageName: unknown

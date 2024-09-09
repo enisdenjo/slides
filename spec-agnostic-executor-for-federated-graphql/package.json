@@ -1,0 +1,11 @@
+{
+  "name": "@slides/spec-agnostic-executor-for-federated-graphql",
+  "scripts": {
+    "start": "slidev"
+  },
+  "dependencies": {
+    "@iconify-json/grommet-icons": "^1.2.0",
+    "@slidev/cli": "^0.49.29",
+    "@slidev/theme-default": "^0.25.0"
+  }
+}
