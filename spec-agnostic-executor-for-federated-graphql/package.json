@@ -1,5 +1,6 @@
 {
   "name": "@slides/spec-agnostic-executor-for-federated-graphql",
+  "private": true,
   "scripts": {
     "build": "slidev build -o ../_site/$(basename $(pwd)) --base /slides/$(basename $(pwd))",
     "start": "slidev"
