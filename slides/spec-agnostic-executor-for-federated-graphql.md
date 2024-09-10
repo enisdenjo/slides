@@ -1803,6 +1803,16 @@ layout: end
 
 I accept questions now and for the rest of the Conf!
 
+<div class="flex justify-center">
+  <img src="/spec-agnostic-executor-for-federated-graphql-link-qr.svg" class="border border-rd" width="30%" />
+</div>
+
+<small>
+
+[🔗 enisdenjo.github.io/slides/spec-agnostic-executor-for-federated-graphql](https://enisdenjo.github.io/slides/spec-agnostic-executor-for-federated-graphql/)
+
+</small>
+
 <!--
 - Thank you for your attention!
 - I'm happy to answer any questions
