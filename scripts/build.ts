@@ -5,10 +5,10 @@ import { globIterate } from 'glob';
 
 await fs.rm('dist', { recursive: true, force: true });
 
-// build decks
 for await (const deck of globIterate('slides/*.md')) {
   const name = path.basename(deck, '.md');
-  execSync(`yarn slidev build ${deck} -o dist/${name} --base /slides/${name}`, {
-    stdio: 'inherit',
-  });
+  execSync(
+    `yarn slidev build ${deck} -o ../dist/${name} --base /slides/${name}`,
+    { stdio: 'inherit' },
+  );
 }
