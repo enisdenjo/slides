@@ -39,7 +39,7 @@ I create and solve problems
 <!--
 - Before we start, let me introduce myself
 - I am Denis from The Guild. And am also a member of the GraphQL TSC
-- So feel free to chase me down and smuther me with any GraphQL related questions, I'm excited to meet everbody
+- So feel free to chase me down and smother me with any GraphQL related questions, I'm excited to meet everybody
 -->
 
 ---
@@ -113,7 +113,7 @@ layout: cover
 Apollo Federation Spec and GraphQL Composite Schema Spec
 
 <!--
-- There are two leading federation specifications that standardise how a federated GraphQL system works
+- There are two leading federation specifications that standardize how a federated GraphQL system works
 - The Apollo Federation spec
 - And the upcoming GraphQL Composite Schema spec
 -->
@@ -265,7 +265,7 @@ Spec agnostic GraphQL composite schema planner and executor
 - The spec agnostic GraphQL composite schema planner, executor and explainer
 
 - Heads up, the library is being actively developed and is NOT published anywhere as of right now
-- You can visit the respository though, dig through the tests and fixtures to get an idea of its inner workings
+- You can visit the repository though, dig through the tests and fixtures to get an idea of its inner workings
 -->
 
 ---
@@ -280,12 +280,12 @@ What makes it interesting and different?
 - Runs in _any_ JavaScript environment
 - Stable plans and explanations
 - No GraphQL.js in execution
-- Everything's JSON serialisable, all steps until execution can be cached
+- Everything's JSON serializable, all steps until execution can be cached
 - Test Driven Development thanks to [The Guild's Apollo Federation Audit](https://federation-gateway-compatibility.pages.dev/)
 
 <!--
 - The work on the library started only to learn and get in-depth knowledge about federated GraphQL
-  - Why are query planners and executors so complicated, how do they works and what decisions it has to make in various scenarious
+  - Why are query planners and executors so complicated, how do they works and what decisions it has to make in various scenarios
 - And I can tell you something - federation is hard, especially federated interfaces and unions!
 
 - Being zero-dep means you don’t need to worry about external packages or libraries. It’s lightweight, highly portable, and easier to integrate into any environment. Oh and, also aims to be very secure!
@@ -294,8 +294,8 @@ What makes it interesting and different?
 - The planner produces stable, predictable execution plans that come with detailed execution explanations. This transparency makes it easier to debug, optimize, and understand how queries are resolved and how the final result is assembled.
 - All steps leading up to execution are JSON serializable, which means they can be cached at any point in the planning process.
   - This allows for efficient reuse of query plans and significantly improves performance by skipping redundant planning stages.
-  - Combining the serialisibility with persisted operations, you can get a very performant and highly secure GraphQL API.
-    - Make sure to attend Benjies talk about "Techniques to Protect Your GraphQL API" tomorrow to learn more about persisted operations and security practices
+  - Combining the serializability with persisted operations, you can get a very performant and highly secure GraphQL API.
+    - Make sure to attend Benjie's talk about "Techniques to Protect Your GraphQL API" tomorrow to learn more about persisted operations and security practices
 
 - Finally, the library's been developed using Test-Driven Development, leveraging The Guild's Apollo Federation Audit to ensure consistent and reliable progress. Giving confidence in its stability and correctness from the very beginning.
   - Of course, it does not yet pass many of the tests - but we're getting there!
@@ -322,7 +322,7 @@ Execution will create a ready-to-use GraphQL response and an "ExecutionExplain" 
   - At the moment, "blueprints" are created manually
     - But in the future, graphql-composite will be able to translate Apollo Federation supergraphs and GraphQL composite schemas to native "blueprints"
 - After that, a "gather plan" is created for an incoming GraphQL query
-  - The "gather plan" is the query plan - explaninig what and how to fetch from where
+  - The "gather plan" is the query plan - explaining what and how to fetch from where
   - And of course, how to assemble the results
 - Final step is executing that "gather plan"
 -->
@@ -856,6 +856,8 @@ layout: two-cols-header
 ---
 
 # Assembling the Blueprint
+
+<!-- cspell:disable-next-line -->
 
 Aaand, we're done! 🎉
 
@@ -1411,7 +1413,7 @@ const gatherPlan = {
 <!--
 - And we're done! That looked simple enough right?
   - Well, conceptually yes - but actually building the code? Oh boy...
-- This gather plan you're looking is fully serialisable
+- This gather plan you're looking is fully serializable
   - You can cache it and avoid planning again
 - Ideally, you'd store the gather plan alongside your persisted operations and only have the executor running in your production environment
 - Having mentioned execution, lets dwell into that:
@@ -1433,7 +1435,7 @@ so we just do that...
 
 <!--
 - The execution is all about following the rules of the gather plan
-- Having the plan very explicit, the execution part itself can be isolated and modularised
+- Having the plan very explicit, the execution part itself can be isolated and modularized
   - so that you have only the executor running on the edge
   - or even implemented in another language to squeeze out max performance
 -->

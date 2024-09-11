@@ -17,6 +17,7 @@ jobs:
         check:
           - format
           - type
+          - spelling
     steps:
       - uses: actions/checkout@v4
       - run: corepack enable
