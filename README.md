@@ -2,9 +2,9 @@
 
 ## Getting Started
 
-1. `yarn`
-1. Create `<title>.md` file with your [Slidev](https://sli.dev/) presentation
-1. `yarn start <title>.md`
+1. `bun i`
+1. Create `slides/<title>.md` file with your [Slidev](https://sli.dev/) presentation
+1. `bun start slides/<title>.md`
 
 ## Deployed
 

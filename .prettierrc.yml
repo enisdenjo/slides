@@ -1,7 +1,6 @@
 singleQuote: true
 plugins:
   - prettier-plugin-pkg
-  - prettier-plugin-sh
 overrides:
   - files:
       - slides/*.md

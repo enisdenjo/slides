@@ -16,14 +16,10 @@ jobs:
       matrix:
         check:
           - format
-          - type
+          - types
           - spelling
     steps:
       - uses: actions/checkout@v4
-      - run: corepack enable
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: .node-version
-          cache: yarn
-      - run: yarn install
-      - run: yarn check:${{ matrix.check }}
+      - uses: oven-sh/setup-bun@v2
+      - run: bun i
+      - run: bun check:${{ matrix.check }}

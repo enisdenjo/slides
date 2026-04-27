@@ -22,13 +22,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: corepack enable
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: .node-version
-          cache: yarn
-      - run: yarn install
-      - run: yarn build
+      - uses: oven-sh/setup-bun@v2
+      - run: bun i
+      - run: bun run build
       - uses: actions/configure-pages@v4
       - uses: actions/upload-pages-artifact@v3
         with:
