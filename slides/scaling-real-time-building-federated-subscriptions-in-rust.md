@@ -434,6 +434,8 @@ We did not build a parallel WebSocket pipeline. We built **one pipeline**, and g
 -->
 
 ---
+zoom: 0.9
+---
 
 # Headers Over WebSocket
 
@@ -452,15 +454,26 @@ websocket:
 - `both` - merge them, operation wins on conflict
 - `persist: true` - remember the merged headers for the rest of the connection
 
+A WebSocket message might look like this:
+
+```json
+{
+  "type": "subscribe",
+  "id": "1",
+  "payload": {
+    "query": "subscription { reviewAdded { body } }",
+    "extensions": { "headers": { "Authorization": "Bearer abc123" } }
+  }
+}
+```
+
 <!--
 - So how do we handle headers?
 - Browsers cannot set arbitrary headers on a WebSocket upgrade. That's a browser limitation, not ours.
 - The protocol works around it by giving you a connection_init message right after the upgrade. We treat the payload of that message as the headers for the connection.
-- We also let you put headers on individual operations, in the extensions field of the GraphQL operation. Useful when one operation needs different headers than the rest.
-
-TODO: add an example of headers in operation extensions
-
-- The "both" mode merges them. Operation extensions win on conflict.
+- We also let you put headers on individual operations, in the extensions field of the GraphQL operation. The example at the bottom of the slide shows what that looks like on the wire.
+- That subscribe message is treated by the router as if you'd made an HTTP request with an Authorization header, regardless of what the connection_init payload was.
+- The "both" mode merges connection_init headers and operation extension headers. Operation extensions win on conflict.
 - And persist lets you remember the merged result so future operations on the same connection inherit it.
 -->
 
@@ -592,20 +605,31 @@ This is the protocol you reach for when subscription counts get really big.
 - Usually a dedicated port, locked down to the internal network
 - Router has to track active subscriptions to know which callbacks are real
 
-For high subscription counts, this trade-off is absolutely worth it.
+```yaml
+subscriptions:
+  enabled: true
+  callback:
+    public_url: https://router.internal:4001/callback
+    listen: 0.0.0.0:4001 # dedicated port, internal network only
+    heartbeat_interval: 5s
+    subgraphs:
+      - reviews
+      - notifications
+```
 
 <!--
 - Of course it's not free.
 - The subgraph now needs a network path back to the router. That's a new thing to set up.
-- In production you usually want a dedicated port for this, locked down to your internal network.
+- The config on the slide shows what that looks like. You give the router a public_url that subgraphs can reach, and a listen address.
+- In production you usually want a dedicated port for this, like the 4001 in the example, locked down to your internal network. That keeps subgraph callbacks isolated from client traffic.
+- The subgraphs list controls which subgraphs use this protocol. Anything not in the list falls back to WebSocket or HTTP streaming.
 - And the router has to track which subscriptions are real, so when a callback comes in, it knows whether to accept it or send a 404.
 - But for high subscription counts, this trade-off is absolutely worth it.
-
-TODO: show router config
 -->
 
 ---
 layout: section
+zoom: 0.9
 ---
 
 # One Broadcaster to Rule Them All
@@ -684,6 +708,30 @@ The broadcaster lets the two halves evolve independently.
 -->
 
 ---
+
+# Backpressure Lives in One Place
+
+The broadcaster is the only thing that has to think about slow consumers.
+
+- Subgraph executors push events into the broadcaster. They don't care who's listening.
+- Per-client send buffers absorb bursts. Slow consumer fills its buffer, drops events, the rest keep up.
+- One slow client can't slow down the upstream subgraph. Or any of the other clients.
+
+```yaml
+subscriptions:
+  enabled: true
+  broadcast_capacity: 64 # per-consumer buffer, defaults to 32
+```
+
+<!--
+- Backpressure is the thing that bites you when dealing with streaming systems and it's the third reason the broadcaster exists.
+- Subgraph executors, the SSE one, the WebSocket one, the HTTP Callback handler, just push events into the broadcaster. They don't know who's listening, they don't know how fast or slow each consumer is, they don't have to.
+- The broadcaster gives every consumer (client) its own buffer. If a consumer falls behind, its buffer fills, it drops events, and we move on. The other consumers keep up. The upstream subgraph keeps emitting at full speed.
+- That isolation is the important part. One slow client cannot slow down the upstream subgraph, and it cannot slow down any of the other clients.
+- The buffer size is configurable per deployment. Bigger buffers tolerate bursts better and use more memory. The default is conservative.
+-->
+
+---
 layout: section
 ---
 
@@ -719,6 +767,7 @@ layout: section
 - **One pipeline beats N pipelines** - synthetic HTTP requests pay back every time someone adds a plugin
 - **One broadcaster decouples both sides** - subgraph transports and client transports evolve independently
 - **Deduplication is free real estate** - one upstream connection can serve a lot of identical clients
+- **Backpressure has one home** - executors push, the broadcaster isolates, slow clients can't poison the rest
 - **HTTP Callback is the scale answer** - flip the connection model when subscription counts get really big
 
 <!--
@@ -728,6 +777,7 @@ layout: section
 - One pipeline beats N pipelines. The synthetic HTTP request trick is the move that pays you back every time someone adds a plugin or a new transport.
 - One central broadcaster decouples how the router talks to subgraphs from how clients talk to the router. Both halves evolve independently.
 - Subscription deduplication is essentially free real estate once the broadcaster is in place. One upstream connection can serve a lot of identical clients, and your subgraphs feel it.
+- Backpressure has exactly one home. Executors push, the broadcaster does the buffering and the dropping, slow clients can't poison the upstream or the other consumers.
 - And HTTP Callback is the answer when you grow into really high subscription counts. Flip the connection model and stop paying for a persistent connection per subscription.
 -->
 
