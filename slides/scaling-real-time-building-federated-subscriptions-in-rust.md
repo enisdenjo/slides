@@ -12,8 +12,8 @@ Denis from **The Guild**
 
 <!--
 - Hi everyone, thanks for being here.
-- I'm Denis, I work at The Guild
-- and I want to take you through what it actually took to build federated GraphQL subscriptions into Hive Router
+- I'm Denis and I work at The Guild.
+- I want to take you through what it actually took to build federated GraphQL subscriptions into Hive Router.
 -->
 
 ---
@@ -25,34 +25,17 @@ layout: center
 ...right?
 
 <!--
-- If you'd asked me what a GraphQL subscription is years back, I would've said: it's just a query that streams.
-- And in a single-service world, sure, that's basically true.
-- But, the moment you put federation underneath it, that sentence stops being true in some really interesting ways.
+- If you'd asked me what a GraphQL subscription is years back, I would've said it is just a query that streams.
+- And in a single-service world, sure, that is basically true.
+- But the moment you put federation underneath it, that sentence stops being true in some really interesting ways.
 -->
 
 ---
 
-# What is a Subscription?
+# The Setup
 
-- **Query** - ask once, get once
-- **Mutation** - change once, get once
-- **Subscription** - ask once, **get forever**
-
-Think notifications, live chat, stock tickers, collaborative editing.
-
-<!--
-- Leys quickly go over what _is_ a subscription?
-- A query asks the server for data once and gets it once.
-- A mutation changes data and gets a response once.
-- However, a subscription opens up and stays open.
-  - The client subscribes, and then the server pushes new data whenever something happens.
--->
-
----
-
-# What is Federation?
-
-Many small GraphQL services stitched into one schema by a router
+- **Subscription** - ask once, get updates forever
+- **Federation** - many GraphQL services behind one router
 
 ```mermaid
 flowchart LR
@@ -62,14 +45,13 @@ flowchart LR
   router --> client(Client)
 ```
 
-The client doesn't know or care that there are multiple services behind the curtain.
+Real-time events on the left. Many subgraphs on the right.
 
 <!--
-- Now that you know about subscriptions - what is federation?
-- Instead of one big GraphQL server, you split it into many small ones, each owning a piece of the schema.
-- Then a router sits in front of them and stitches it all together so the client sees one unified schema.
-- The client doesn't know or care that there are five services behind the curtain.
-- That's the job of the router.
+- Very quickly, here is the setup.
+- A subscription means the client asks once and then keeps getting updates.
+- Federation means many GraphQL services sit behind one router.
+- Put those together and you get one client stream on the outside and many services involved on the inside.
 -->
 
 ---
@@ -113,19 +95,34 @@ layout: section
 
 # Four Reasons
 
-- Many transports - we support all five
+- Many transports - three HTTP streaming variants, WebSocket, and callback
 - Data spans subgraphs - per event, not once at the start
 - Protocol mismatch - clients and subgraphs rarely speak the same protocol
 - Long-lived by nature - the request that started it is long gone
 
 <!--
-- There's four reasons this is harder than it looks.
-- First, there are many transports for subscriptions. Not one.
-  - We support all five.
+- There are four reasons this is harder than it looks.
+- First, there are many transports for subscriptions.
+- In practice that means three HTTP streaming variants, WebSocket, and callback.
 - Second, every single event coming through can need data from multiple subgraphs.
-  - We'll come back to this.
-- Third, the protocol your client speaks is often not the protocol your subgraph speaks. The router has to bridge that.
-- And fourth, subscriptions outlive the request that opened them. Which means anything the stream touches has to survive past that original request.
+- Third, the protocol your client speaks is often not the protocol your subgraph speaks.
+- And fourth, subscriptions outlive the request that opened them, so the state has to outlive that request too.
+-->
+
+---
+
+# What Broke First
+
+- The naive model was one stream in, one stream out
+- Federation turns each event into follow-up work
+- The router pipeline assumed request-scoped lifetimes
+- WebSocket did not fit the HTTP-shaped internals
+
+<!--
+- The first version in your head is always simpler than the real thing.
+- One stream in and one stream out sounds manageable.
+- Then federation means each event needs more work before it can be sent.
+- And the router internals were built around normal HTTP requests, not long-lived WebSocket operations.
 -->
 
 ---
@@ -148,9 +145,9 @@ layout: section
 - WebSockets
 - HTTP Callback \*\*
 
-Every subscription protocol in serious use today. Client-to-router **and** router-to-subgraph.
+That is three HTTP streaming variants, plus WebSocket, plus callback.
 
-<sub>\** HTTP Callback is router-to-subgraph only - it's a subgraph push protocol, not a client one.</sub><br/>
+<sub>\** HTTP Callback is router-to-subgraph only - it is a subgraph push protocol, not a client one.</sub><br/>
 <sub>*Except `subscriptions-transport-ws` - deprecated since 2023, unmaintained since 2018. Use `graphql-ws`.</sub>
 
 <!--
@@ -160,6 +157,26 @@ Every subscription protocol in serious use today. Client-to-router **and** route
   - The one asterisk is HTTP Callback. That one is router-to-subgraph only. It can't work as a client protocol because it requires the sender to be able to make HTTP requests back to the receiver. We'll get to it later in the talk.
 - The reason we support all of them is simple. The ecosystem is fragmented and clients have already picked. If your client speaks SSE, your router needs to speak SSE.
   - You don't get to tell your users to rewrite their client.
+-->
+
+---
+
+# Same Problem, Different Transports
+
+| Transport      | Best fit                           | Tradeoff                            |
+| -------------- | ---------------------------------- | ----------------------------------- |
+| SSE            | simple browser streams             | one operation per connection        |
+| Multipart HTTP | incremental HTTP responses         | multiple variants in the wild       |
+| WebSocket      | one connection for many operations | needs its own protocol state        |
+| HTTP Callback  | very high subscription counts      | subgraph must call back into router |
+
+<!--
+- The important point is not just that there are many transports.
+- They each solve a slightly different deployment problem.
+- SSE is simple.
+- Multipart stays in normal HTTP land.
+- WebSocket is great when you want one long-lived client connection.
+- Callback is what you reach for when upstream connection counts get too large.
 -->
 
 ---
@@ -547,9 +564,23 @@ layout: fact
 
 <!--
 - Quick framing for why this protocol exists.
-- If you have ten thousand active subscriptions on your router, that's ten thousand open connections going out to your subgraphs.
-- That's a lot of file descriptors, a lot of memory, a lot of state.
+- If you have ten thousand active subscriptions on your router, that is ten thousand open connections going out to your subgraphs.
+- That is a lot of file descriptors, memory, and connection state.
 - HTTP Callback exists because at scale, that becomes a problem worth solving.
+-->
+
+---
+layout: fact
+---
+
+# 10k x 3 x 4 = 120k
+
+10k subscriptions x 3 subscribed subgraphs x 4 router instances
+
+<!--
+- And the scale pressure is multiplicative.
+- Ten thousand subscriptions across three subgraphs and four router instances is one hundred and twenty thousand upstream streams.
+- That is why connection count becomes an architectural problem, not just an implementation detail.
 -->
 
 ---
@@ -585,15 +616,15 @@ sequenceDiagram
 
 - No long-lived connections to subgraphs
 - Subgraph chooses when to push
-- Both sides stateless on the wire - horizontal scaling is a lot easier
+- Both sides stateless on the wire
 
 This is the protocol you reach for when subscription counts get really big.
 
 <!--
-- Why does this mattern?
+- Why does this matter?
 - We have no persistent connections to subgraphs anymore.
-- The subgraph decides when to push. It's not being polled, it's not holding a stream open just in case.
-- And both sides are stateless on the wire. That makes horizontal scaling a lot easier on both ends.
+- The subgraph decides when to push.
+- And both sides stay stateless on the wire, which makes horizontal scaling much easier.
 - This is the protocol you reach for when subscription counts get really big.
 -->
 
@@ -760,15 +791,12 @@ layout: section
 
 ---
 
-# Takeaways
+# Takeaways...
 
-- **A subscription is a relationship, not a request** - almost every hard problem traces back to that fact
-- **Every event is a mini query plan** - the federation work happens per event, not per subscription
-- **One pipeline beats N pipelines** - synthetic HTTP requests pay back every time someone adds a plugin
-- **One broadcaster decouples both sides** - subgraph transports and client transports evolve independently
-- **Deduplication is free real estate** - one upstream connection can serve a lot of identical clients
-- **Backpressure has one home** - executors push, the broadcaster isolates, slow clients can't poison the rest
-- **HTTP Callback is the scale answer** - flip the connection model when subscription counts get really big
+- **A subscription is a relationship, not a request**
+- **Every event is a mini query plan**
+- **One pipeline beats two**
+- **One broadcaster decouples both sides**
 
 <!--
 - A few things to take with you.
@@ -776,6 +804,17 @@ layout: section
 - Every event is a mini query plan. The federation work happens per event, not per subscription. That changes how you build the executor.
 - One pipeline beats N pipelines. The synthetic HTTP request trick is the move that pays you back every time someone adds a plugin or a new transport.
 - One central broadcaster decouples how the router talks to subgraphs from how clients talk to the router. Both halves evolve independently.
+-->
+
+---
+
+# ...More Takeaways
+
+- **Deduplication is free real estate**
+- **Backpressure has one home**
+- **HTTP Callback is the scale answer**
+
+<!--
 - Subscription deduplication is essentially free real estate once the broadcaster is in place. One upstream connection can serve a lot of identical clients, and your subgraphs feel it.
 - Backpressure has exactly one home. Executors push, the broadcaster does the buffering and the dropping, slow clients can't poison the upstream or the other consumers.
 - And HTTP Callback is the answer when you grow into really high subscription counts. Flip the connection model and stop paying for a persistent connection per subscription.
