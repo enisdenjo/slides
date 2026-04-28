@@ -12,7 +12,8 @@ Denis from **The Guild**
 
 <!--
 - Hi everyone, thanks for being here.
-- I'm Denis, I work on Hive Router at The Guild, and I want to take you through what it actually took to build federated GraphQL subscriptions into Hive Router.
+- I'm Denis, I work at The Guild
+- and I want to take you through what it actually took to build federated GraphQL subscriptions into Hive Router
 -->
 
 ---
@@ -24,9 +25,9 @@ layout: center
 ...right?
 
 <!--
-- Before we started this work, if you'd asked me what a GraphQL subscription is a few years back, I would've said: it's just a query that streams.
+- If you'd asked me what a GraphQL subscription is years back, I would've said: it's just a query that streams.
 - And in a single-service world, sure, that's basically true.
-- The moment you put federation underneath it, that sentence stops being true in some really interesting ways.
+- But, the moment you put federation underneath it, that sentence stops being true in some really interesting ways.
 -->
 
 ---
@@ -40,10 +41,11 @@ layout: center
 Think notifications, live chat, stock tickers, collaborative editing.
 
 <!--
-- Ok so what is a subscription?
+- Leys quickly go over what _is_ a subscription?
 - A query asks the server for data once and gets it once.
 - A mutation changes data and gets a response once.
-- A subscription opens up and stays open. The client subscribes, and then the server pushes new data whenever something happens.
+- However, a subscription opens up and stays open.
+  - The client subscribes, and then the server pushes new data whenever something happens.
 -->
 
 ---
@@ -63,8 +65,9 @@ flowchart LR
 The client doesn't know or care that there are multiple services behind the curtain.
 
 <!--
+- Now that you know about subscriptions - what is federation?
 - Instead of one big GraphQL server, you split it into many small ones, each owning a piece of the schema.
-- A router sits in front of them and stitches it all together so the client sees one unified schema.
+- Then a router sits in front of them and stitches it all together so the client sees one unified schema.
 - The client doesn't know or care that there are five services behind the curtain.
 - That's the job of the router.
 -->
@@ -89,11 +92,10 @@ flowchart LR
 One subscription on the left. Multiple subgraphs on the right. The router makes it look like one thing.
 
 <!--
-- So this is what a federated subscription looks like.
+- Right, this is what a federated subscription looks like.
 - One subscription on the left. The client opens it once.
 - On the right, multiple subgraphs. One of them is the source of the events, the others fill in related data.
 - The job of the router is to make all of that look like one thing to the client.
-- Easy to draw. Less easy to build, as we'll see.
 -->
 
 ---
@@ -104,24 +106,26 @@ layout: section
 
 <!--
 - Now let's talk about why federated subscriptions are harder to build than they look on paper.
-- The drawing was easy. The implementation isn't.
+- The drawing was easy. But the implementation isn't...
 -->
 
 ---
 
 # Four Reasons
 
-- Many transports - we support all five in production use
+- Many transports - we support all five
 - Data spans subgraphs - per event, not once at the start
 - Protocol mismatch - clients and subgraphs rarely speak the same protocol
 - Long-lived by nature - the request that started it is long gone
 
 <!--
-- Four reasons this is harder than it looks.
-- First, there are many transports for subscriptions. Not one. We support all five in serious use.
-- Second, every single event coming through can need data from multiple subgraphs. We'll come back to this.
+- There's four reasons this is harder than it looks.
+- First, there are many transports for subscriptions. Not one.
+  - We support all five.
+- Second, every single event coming through can need data from multiple subgraphs.
+  - We'll come back to this.
 - Third, the protocol your client speaks is often not the protocol your subgraph speaks. The router has to bridge that.
-- Fourth, subscriptions outlive the request that opened them. Which means anything the stream touches has to survive past that original request.
+- And fourth, subscriptions outlive the request that opened them. Which means anything the stream touches has to survive past that original request.
 -->
 
 ---
@@ -132,7 +136,6 @@ layout: section
 
 <!--
 - Let's start with the transports. The protocols.
-- This is the part of the project where we had to make peace with the fragmentation in the GraphQL ecosystem.
 -->
 
 ---
@@ -152,11 +155,11 @@ Every subscription protocol in serious use today. Client-to-router **and** route
 
 <!--
 - These are every subscription protocol in serious use today. SSE, Incremental Delivery, Apollo's Multipart HTTP, WebSockets, and HTTP Callback.
-- And the important word here is all. We support all of them. Not a subset. Not the popular ones. All of them.
+- And Hive Router supports all of them.
 - And not just on one side. All of them work both client-to-router and router-to-subgraph. Whatever your client speaks, we speak. Whatever your subgraph speaks, we speak.
-- The one asterisk is HTTP Callback. That one is router-to-subgraph only. It doesn't really make sense as a client protocol because it requires the sender to be able to make HTTP requests back to the receiver. We'll get to it later in the talk.
-- The only thing we deliberately do not support is the old subscriptions-transport-ws protocol. It's been deprecated since 2023, basically unmaintained since 2018. If you're still on it, the migration to graphql-ws is the answer.
-- The reason we support all of them is simple. The ecosystem is fragmented and clients have already picked. If your client speaks SSE, your router needs to speak SSE. You don't get to tell your users to rewrite their client.
+  - The one asterisk is HTTP Callback. That one is router-to-subgraph only. It can't work as a client protocol because it requires the sender to be able to make HTTP requests back to the receiver. We'll get to it later in the talk.
+- The reason we support all of them is simple. The ecosystem is fragmented and clients have already picked. If your client speaks SSE, your router needs to speak SSE.
+  - You don't get to tell your users to rewrite their client.
 -->
 
 ---
@@ -176,7 +179,7 @@ The router is a translator between protocols that were never designed to talk to
 <!--
 - This isn't surprising, it's just how routers work. But it's worth saying out loud.
 - The protocol the client uses to talk to the router does not have to match the protocol the router uses to talk to the subgraphs.
-- A client can connect over WebSocket. The router can talk to one subgraph over SSE, another over Multipart, and a third over HTTP Callback.
+- A client can connect over WebSocket. The router can talk to one subgraph over SSE or over HTTP Callback.
 - The router is essentially a translator between protocols that were never really designed to talk to each other.
 - Each side gets to use what works best for it. That's the whole point.
 -->
@@ -203,7 +206,7 @@ websocket:
 <!--
 - The three HTTP streaming protocols all live on the same endpoint.
 - The client sends an Accept header, the router looks at it, and picks the right one for the request.
-- One config flag, subscriptions enabled, lights up all three of them. SSE, Incremental Delivery, Apollo Multipart. You don't pick one, you pick all three by default.
+- One config flag, subscriptions enabled, lights up all three of them. SSE, Incremental Delivery, Apollo's Multipart. You don't pick one, you pick all three by default.
 - WebSocket is different. It's a connection upgrade, not content negotiation. So it has its own opt-in config block.
 - That separation matters: a router can support WebSocket for queries and mutations even if subscriptions are off, and it can support all three streaming protocols without ever turning WebSocket on.
 -->
@@ -221,7 +224,7 @@ heartbeats · backpressure · schema reloads · client disappears mid-flight
 - The hard part is keeping the connection alive and behaving correctly while it's open.
 - You need heartbeats so proxies don't kill the connection.
 - You need to handle the case where the client disappears mid-flight and never tells you.
-- You need to deal with schema reloads, where the schema underneath the subscription literally changes while it's running.
+- You need to deal with schema reloads, where the schema underneath the subscription changes while it's running.
 - And you need backpressure, because a slow consumer should not be able to take the whole router down.
 - None of that is in the protocol spec. All of it is your problem.
 -->
@@ -233,8 +236,7 @@ layout: section
 # Entity Resolution Per Event
 
 <!--
-- Now let's talk about what makes federated subscriptions different from regular ones.
-- This is the part where federation actually shows up in the design.
+- This part, the entity resolution, is what makes federated subscriptions different from regular ones.
 -->
 
 ---
@@ -266,6 +268,8 @@ The Reviews subgraph emits the event but has no idea what `product` or `author` 
 -->
 
 ---
+zoom: 0.65
+---
 
 # What Actually Happens
 
@@ -290,9 +294,9 @@ sequenceDiagram
 
 <!--
 - Reviews emits an event. The router receives it.
-- Then the router has to go to Products and to Users, fetch the related entities, stitch them together, project the response, and only then forward it to the client.
-- And then the next event comes in. And we do it all again.
-- Every event. Forever. For as long as that subscription is open.
+- Then the router has to go to Products and to Users, fetch the related entities, join them, project the response, and only then forward it to the client.
+- And then the next event comes in. And we do it all over again.
+- Every event. For as long as that subscription is open.
 -->
 
 ---
@@ -302,10 +306,10 @@ layout: statement
 "Every event is a mini query plan."
 
 <!--
-- This is the line that changed how we thought about the whole feature.
+- Simply put:
 - Every event is a mini query plan.
 - For a normal query you plan once and you execute once.
-- For a subscription, you plan once, and then you execute that plan over and over, every time the source emits.
+- But for a subscription, you plan once, and then you execute that plan over and over, every time the source emits.
 - A subscription that emits a thousand events is a thousand executions of your query plan.
 -->
 
@@ -386,9 +390,9 @@ layout: statement
 "So we make them HTTP requests."
 
 <!--
-- The answer we landed on is one of my favorite parts of this whole project.
+- The answer is "no".
 - We don't duplicate the pipeline. We pretend.
-- Every operation that comes in over a WebSocket gets wrapped into a synthetic HTTP request before it hits the rest of the system.
+- Every operation that comes in over a WebSocket becomes a synthetic HTTP request before it hits the rest of the system.
 -->
 
 ---
@@ -406,8 +410,8 @@ We did not build a parallel WebSocket pipeline. We built **one pipeline**, and g
 
 <!--
 - A subscribe message arrives on the WebSocket. We construct a fake HTTP request out of it.
-- We synthesize a method, a path, headers, a body, the whole thing. From the WebSocket message, the connection state, and our config.
-- Then it goes through the exact same path as a curl would.
+- We synthesize a method, a path, headers, a body, the whole thing from the WebSocket message, the connection state, and our config.
+- Then it goes through the exact same path as a curl call would.
 - The auth plugin runs. Header propagation runs. Rate limiting runs. Deduplication runs. Tracing runs.
 - We did not build a parallel WebSocket pipeline. We built one pipeline, and gave WebSocket a translator at the door.
 -->
@@ -425,7 +429,7 @@ We did not build a parallel WebSocket pipeline. We built **one pipeline**, and g
 - A few concrete things this design buys us.
 - One pipeline for two transports. We don't have a WebSocket auth plugin and an HTTP auth plugin. There's just an auth plugin.
 - Every new plugin we add works on WebSocket the day it ships. We don't have to remember to wire it up twice.
-- One fingerprint space for deduplication. A subscription that came in over WebSocket can be deduplicated with the same subscription that came in over SSE. They look the same to the rest of the router.
+- One fingerprint space for deduplication. A subscription, or an inflight request, that came in over WebSocket can be deduplicated with the same operation that came in over SSE. They all look the same to the rest of the router.
 - And when something goes wrong at three in the morning, you have one mental model. It's all just a request. The WebSocket part stops mattering really quickly.
 -->
 
@@ -449,13 +453,19 @@ websocket:
 - `persist: true` - remember the merged headers for the rest of the connection
 
 <!--
+- So how do we handle headers?
 - Browsers cannot set arbitrary headers on a WebSocket upgrade. That's a browser limitation, not ours.
 - The protocol works around it by giving you a connection_init message right after the upgrade. We treat the payload of that message as the headers for the connection.
-- We also let you put headers on individual operations, in the extensions field. Useful when one operation needs different headers than the rest.
-- The both mode merges them. Operation extensions win on conflict.
+- We also let you put headers on individual operations, in the extensions field of the GraphQL operation. Useful when one operation needs different headers than the rest.
+
+TODO: add an example of headers in operation extensions
+
+- The "both" mode merges them. Operation extensions win on conflict.
 - And persist lets you remember the merged result so future operations on the same connection inherit it.
 -->
 
+---
+zoom: 0.85
 ---
 
 # Why `persist: true` is Nice
@@ -475,7 +485,7 @@ sequenceDiagram
 Rotate an expiring auth token mid-connection without reconnecting.
 
 <!--
-- Here's the use case that makes persist genuinely useful.
+- Here's the use case that makes the persist option genuinely useful.
 - Client connects, sends connection_init with a short-lived token. We store it.
 - Some operations happen. The token is about to expire.
 - The client sends the next subscribe message with a new token in extensions.headers.
@@ -500,7 +510,7 @@ Once headers work over WS, you can ditch HTTP entirely.
 - You skip the per-request overhead. No new TLS handshake, no header re-parsing on every request, no new socket setup.
 - Auth works the same way for every operation, because operations are uniform inside the connection.
 - For mobile apps and IoT devices that pay a real cost for every HTTP setup, this is a measurable win.
-- And because of the synthetic request trick from the previous slide, the rest of the router doesn't even know the difference.
+- And because of the synthetic request trick from the previous slides, the rest of the router doesn't even know the difference.
 -->
 
 ---
@@ -525,10 +535,12 @@ layout: fact
 <!--
 - Quick framing for why this protocol exists.
 - If you have ten thousand active subscriptions on your router, that's ten thousand open connections going out to your subgraphs.
-- Per router instance. That's a lot of file descriptors, a lot of memory, a lot of state.
-- HTTP Callback exists because at some scale, that becomes a problem worth solving.
+- That's a lot of file descriptors, a lot of memory, a lot of state.
+- HTTP Callback exists because at scale, that becomes a problem worth solving.
 -->
 
+---
+zoom: 0.85
 ---
 
 # What if the Subgraph Called Us Instead?
@@ -565,6 +577,7 @@ sequenceDiagram
 This is the protocol you reach for when subscription counts get really big.
 
 <!--
+- Why does this mattern?
 - We have no persistent connections to subgraphs anymore.
 - The subgraph decides when to push. It's not being polled, it's not holding a stream open just in case.
 - And both sides are stateless on the wire. That makes horizontal scaling a lot easier on both ends.
@@ -582,11 +595,13 @@ This is the protocol you reach for when subscription counts get really big.
 For high subscription counts, this trade-off is absolutely worth it.
 
 <!--
-- It's not free, of course.
+- Of course it's not free.
 - The subgraph now needs a network path back to the router. That's a new thing to set up.
 - In production you usually want a dedicated port for this, locked down to your internal network.
 - And the router has to track which subscriptions are real, so when a callback comes in, it knows whether to accept it or send a 404.
 - But for high subscription counts, this trade-off is absolutely worth it.
+
+TODO: show router config
 -->
 
 ---
@@ -596,7 +611,7 @@ layout: section
 # One Broadcaster to Rule Them All
 
 <!--
-- Here's the architectural piece I'm most proud of.
+- Here's the architectural piece we're proud of.
 - One component sits at the heart of every subscription that flows through the router.
 -->
 
@@ -617,8 +632,8 @@ A single in-router broadcast channel sits between **how the router subscribes to
 <!--
 - Inside the router, every subscription goes through one piece. A central broadcaster.
 - The broadcaster sits between two completely separate concerns.
-- On one side, how the router subscribes to subgraphs. SSE, Multipart, WebSocket, HTTP Callback, whichever.
-- On the other side, how clients subscribe to the router. Also SSE, Multipart, WebSocket, whichever they prefer.
+- On one side, how the router subscribes to subgraphs. SSE, WebSocket, HTTP Callback, whichever.
+- On the other side, how clients subscribe to the router.
 - Neither side knows about the other. The broadcaster is the seam.
 -->
 
@@ -646,7 +661,8 @@ A thousand clients watching the same `reviewAdded` cost the subgraph **one** sub
 - The first thing the broadcaster gets you is deduplication.
 - A thousand clients can ask for the exact same subscription. The router opens exactly one upstream connection to the subgraph.
 - Every event from that one connection gets fanned out to all thousand clients through the broadcaster.
-- This is a massive win for the subgraph. Subscription throughput on the subgraph stops scaling with client count and starts scaling with how many distinct subscriptions exist.
+- This is a massive win for the subgraph.
+- Subscription throughput on the subgraph stops scaling with client count and starts scaling with how many distinct subscriptions exist.
 - For something like a stock ticker, where everyone is watching the same handful of symbols, the savings are enormous.
 -->
 
@@ -665,7 +681,6 @@ The broadcaster lets the two halves evolve independently.
 - The transport the router uses to talk to subgraphs is completely independent of the transport clients use to talk to the router.
 - The subgraph could be pushing events over HTTP Callback. Clients could be receiving them over WebSocket. The broadcaster bridges that, transparently.
 - And if we add a new client-facing transport tomorrow, none of the subgraph-facing code has to change. We just hook a new fan-out path to the broadcaster.
-- This is what made supporting five protocols actually maintainable instead of a combinatorial nightmare.
 -->
 
 ---
@@ -692,20 +707,7 @@ layout: section
 - Predictable memory. There's no garbage collector pausing a fanout at the wrong moment when an event needs to go out to a lot of streams.
 - Cheap shared ownership. The same schema, the same query plan, the same headers get shared across every active subscription stream without copying.
 - The async runtime we use is tuned for the exact shape of this workload. Many connections that are mostly idle, with occasional bursts of activity. That's exactly what subscriptions look like.
-- And the borrow checker. The fact that subscription streams outlive the request would have been a runtime bug in any other language. In Rust, it stopped us at compile time and forced us to design the ownership story up front.
--->
-
----
-
-# What's Still Hard
-
-- No silent retries - if the connection drops, we tell the client. Retrying silently would lose events without anyone knowing.
-- Schema reloads close active subscriptions - clients reconnect. You can't migrate an in-flight subscription to a new schema.
-
-<!--
-- Two things we deliberately don't do.
-- We don't do silent retries on subscriptions. If the connection drops, we tell the client. Because subscriptions are stateless on the subgraph side, retrying silently would lose events without anyone knowing. That's a worse outcome than a clean failure.
-- And when the schema reloads, we close all active subscriptions with a specific error code. The client reconnects against the new schema. We don't try to migrate an in-flight subscription, because you can't reason about what "the same subscription" even means when the schema underneath has changed.
+- And the borrow checker. The fact that subscription streams outlive the request is easy in any other language. In Rust, it stopped us at compile time and forced us to design the ownership story up front.
 -->
 
 ---
@@ -737,11 +739,10 @@ layout: end
 
 Hive Router is open source - [the-guild.dev/graphql/hive](https://the-guild.dev/graphql/hive)
 
-[`@enisdenjo`](https://github.com/enisdenjo) · Questions?
+Questions?
 
 <!--
 - That's it. Hive Router is open source.
 - The docs for everything I talked about today are at the-guild.dev/graphql/hive.
-- You can find me at @enisdenjo if you want to talk more.
 - Thank you. Happy to take questions.
 -->
