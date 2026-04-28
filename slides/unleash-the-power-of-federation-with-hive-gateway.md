@@ -283,7 +283,7 @@ zoom: 0.75
 - JWT authentication with `@authenticated` directives
 - HMAC signature validation between gateway and subgraphs
 - Role-based authorization with `@requiresScopes`
-- Trusted Documents (previusly known as GraphQL Persisted Operations/Documents)
+- Trusted Documents (previously known as GraphQL Persisted Operations/Documents)
 - Attack prevention: depth limits, rate limiting, introspection control
 
 ### Real-time & Observability
@@ -703,7 +703,7 @@ graph LR
 - In practice it looks something like this
 - Here you can see multiple gateway instances all connected via NATS
 - where any service can publish events to the message broker
-- They dont even have to be subgraphs!
+- They don't even have to be subgraphs!
 - All connected clients get real-time updates regardless of which gateway they're connected to
 - This scales horizontally unlike traditional WebSocket or SSE subscriptions to subgraphs
 - The beauty of EDFS is that it decouples the subscription source from the subscription consumers
@@ -762,7 +762,7 @@ Modern logging for GraphQL applications
 - The key improvement the logger carries to Hive Gateway version 2, is that
 - every log entry automatically gets tagged with the request ID.
 - This means you can filter your logs by a specific request and see its entire journey
-- Oh and, you can cusotomize the underlying writer
+- Oh and, you can customize the underlying writer
 - plug in your favorite logging library like Pino or Winston,
 - Or output JSON? Or you can simply write to a file - it's up to you.
 -->
