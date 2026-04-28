@@ -15,6 +15,6 @@ A fresh take on planning and executing federated GraphQL schemas. The executor i
 ### [Workshop: Unleash the Power of Federation with Hive Gateway](https://enisdenjo.github.io/slides/unleash-the-power-of-federation-with-hive-gateway)
 
 > [!IMPORTANT]
-> Slides copied from the [Hive Gateway workshop repository](https://github.com/graphql-hive/graphql-conf-2025-gateway-workshop).
+> Slides copied from the [workshop repository](https://github.com/graphql-hive/graphql-conf-2025-gateway-workshop).
 
 Unleash the Power of Federation with Hive Gateway Discover the possibilities of your GraphQL APIs! Learn how to use GraphQL Federation to unite various services and get to know Hive Gateway, an open-source GraphQL router. During this practical exercise, you will configure a simple federated gateway and execute queries across merged schemas. Discover important features such as built-in monitoring with OpenTelemetry, automatic query batching for optimal efficiency, strong security choices like JWT authentication and rate limiting, and GraphQL Subscriptions for real-time data. Find out for yourself how Hive Gateway makes it easier to create scalable and maintainable GraphQL.
