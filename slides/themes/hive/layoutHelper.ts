@@ -5,8 +5,12 @@ import type { CSSProperties } from 'vue';
  */
 export function resolveAssetUrl(url: string) {
   if (url.startsWith('/')) {
-    // base url does not end with "/", see scripts/build.ts
-    return import.meta.env.BASE_URL + '/' + url.slice(1);
+    const baseUrl = import.meta.env.BASE_URL;
+    if (baseUrl.endsWith('/')) {
+      return baseUrl + url.slice(1);
+    }
+    // base url does not end with "/" when building, see scripts/build.ts
+    return baseUrl + '/' + url.slice(1);
   }
   return url;
 }
