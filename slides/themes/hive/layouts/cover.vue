@@ -4,7 +4,7 @@ import { handleBackground } from '../layoutHelper';
 
 const props = defineProps({
   background: {
-    default: './themes-hive-cover.png',
+    default: '/themes-hive-cover.png',
   },
 });
 
