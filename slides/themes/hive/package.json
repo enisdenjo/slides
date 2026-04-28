@@ -1,0 +1,18 @@
+{
+  "name": "@themes/hive",
+  "private": true,
+  "dependencies": {
+    "@slidev/types": "^52.14.2",
+    "codemirror-theme-vars": "^0.1.2",
+    "prism-theme-vars": "^0.2.5"
+  },
+  "slidev": {
+    "defaults": {
+      "fonts": {
+        "mono": "Fira Code",
+        "sans": "Avenir Next,Nunito Sans",
+        "local": "Avenir Next"
+      }
+    }
+  }
+}
