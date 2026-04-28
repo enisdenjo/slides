@@ -12,8 +12,32 @@ Denis from **The Guild**
 
 <!--
 - Hi everyone, thanks for being here.
-- I'm Denis and I work at The Guild.
-- I want to take you through what it actually took to build federated GraphQL subscriptions into Hive Router.
+- I want to take you through what it actually means building federated GraphQL subscriptions.
+- For we have built just that, in Hive Router.
+-->
+
+---
+
+# About Me
+
+I work at The Guild, the team behind your GraphQL tooling
+
+<img src="/denis.jpg" alt="Denis" width="100" style="border-radius: 10px" />
+
+<br/>
+
+## Denis
+
+- [`@enisdenjo`](https://github.com/enisdenjo)
+- [the-guild.dev](https://the-guild.dev/)
+- Software Developer
+
+<!--
+- But before all that,
+- Let me start by introducing the company behind the tools you probably use
+- The Guild build open-source GraphQL tools that power thousands of applications
+- We're passionate about federation, gateways and making GraphQL better for everyone!
+- and I'm Denis, from The Guild
 -->
 
 ---
