@@ -859,3 +859,11 @@ Questions?
 - The docs for everything I talked about today are at the-guild.dev/graphql/hive.
 - Thank you. Happy to take questions.
 -->
+
+---
+
+<!--
+TODO: add some gifs or something, some animations
+TODO: also show how deduplication looks like maybe? info chart or something
+TODO: see slack messages
+-->
