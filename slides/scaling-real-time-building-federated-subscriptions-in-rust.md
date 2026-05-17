@@ -866,4 +866,5 @@ Questions?
 TODO: add some gifs or something, some animations
 TODO: also show how deduplication looks like maybe? info chart or something
 TODO: see slack messages
+TODO: booth app qr code
 -->
