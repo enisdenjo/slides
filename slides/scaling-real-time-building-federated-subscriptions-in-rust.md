@@ -2,6 +2,8 @@
 theme: ./themes/hive
 transition: none
 layout: cover
+addons:
+  - slidev-addon-qrcode
 ---
 
 <h1 style="margin-top: 200px; font-size: 2.6rem; line-height: 1.2">
@@ -63,13 +65,13 @@ layout: center
 
 ```mermaid
 flowchart LR
-  reviews[Reviews] --> router([Hive Router])
-  users[Users] --> router
-  products[Products] --> router
-  router --> client(Client)
+  client(Client) --> router([Hive Router])
+  router --> reviews[Reviews]
+  router --> users[Users]
+  router --> products[Products]
 ```
 
-Real-time events on the left. Many subgraphs on the right.
+One client on the left. Many subgraphs on the right.
 
 <!--
 - Very quickly, here is the setup.
@@ -89,13 +91,13 @@ flowchart LR
   reviews[Reviews subgraph]
   users[Users subgraph]
   products[Products subgraph]
-  client -->|subscribe| router
-  router -->|subscribe reviewAdded| reviews
+  client <-->|subscribe| router
+  router <-->|subscribe reviewAdded| reviews
   router -.->|query author| users
   router -.->|query product| products
 ```
 
-One subscription on the left. Multiple subgraphs on the right. The router makes it look like one thing.
+One subscription drives it. The router queries other subgraphs per event to resolve federated entities.
 
 <!--
 - Right, this is what a federated subscription looks like.
@@ -119,33 +121,50 @@ layout: section
 
 # Four Reasons
 
-- Many transports - three HTTP streaming variants, WebSocket, and callback
-- Data spans subgraphs - per event, not once at the start
-- Protocol mismatch - clients and subgraphs rarely speak the same protocol
-- Long-lived by nature - the request that started it is long gone
+| Challenge | The problem |
+| --- | --- |
+| Many transports | Three HTTP streaming variants, WebSocket, and callback - both client-to-router and router-to-subgraph |
+| Data spans subgraphs | Every event can need data from other subgraphs, not just at the start |
+| Protocol mismatch | The protocol your client speaks rarely matches what your subgraph speaks |
+| Long-lived by nature | The request that started it is long gone before the last event arrives |
 
 <!--
 - There are four reasons this is harder than it looks.
 - First, there are many transports for subscriptions.
 - In practice that means three HTTP streaming variants, WebSocket, and callback.
+- And that protocol decision exists on both sides: between client and router, and between router and each subgraph. They don't have to match.
 - Second, every single event coming through can need data from multiple subgraphs.
 - Third, the protocol your client speaks is often not the protocol your subgraph speaks.
 - And fourth, subscriptions outlive the request that opened them, so the state has to outlive that request too.
 -->
 
 ---
+layout: two-cols-header
+---
 
 # What Broke First
 
-- The naive model was one stream in, one stream out
-- Federation turns each event into follow-up work
-- The router pipeline assumed request-scoped lifetimes
-- WebSocket did not fit the HTTP-shaped internals
+::left::
+
+### Naive model
+
+- One stream in
+- One stream out
+- Request lives, request dies
+
+::right::
+
+### Reality
+
+- Each event spawns subgraph queries
+- Streams outlive the request
+- WebSocket doesn't fit HTTP-shaped internals
 
 <!--
 - The first version in your head is always simpler than the real thing.
 - One stream in and one stream out sounds manageable.
 - Then federation means each event needs more work before it can be sent.
+- Streams have to outlive the request that opened them, which breaks every assumption about ownership and lifetimes.
 - And the router internals were built around normal HTTP requests, not long-lived WebSocket operations.
 -->
 
@@ -194,6 +213,17 @@ That is three HTTP streaming variants, plus WebSocket, plus callback.
 | WebSocket      | one connection for many operations | needs its own protocol state        |
 | HTTP Callback  | very high subscription counts      | subgraph must call back into router |
 
+<div style="display: flex; justify-content: center; margin-top: 1em">
+  <QRCode
+    :width="150"
+    :height="150"
+    type="svg"
+    data="https://the-guild.dev/graphql/hive/docs/router/subscriptions#choosing-a-transport"
+    :dotsOptions="{ color: '#121212' }"
+    :backgroundOptions="{ color: 'white' }"
+  />
+</div>
+
 <!--
 - The important point is not just that there are many transports.
 - They each solve a slightly different deployment problem.
@@ -201,6 +231,7 @@ That is three HTTP streaming variants, plus WebSocket, plus callback.
 - Multipart stays in normal HTTP land.
 - WebSocket is great when you want one long-lived client connection.
 - Callback is what you reach for when upstream connection counts get too large.
+- This table is also in our docs with more detail - the QR code goes straight there.
 -->
 
 ---
