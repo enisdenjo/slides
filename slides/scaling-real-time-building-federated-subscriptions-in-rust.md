@@ -93,6 +93,8 @@ zoom: 0.8
 
 ...right?
 
+<img src="/gifs/smart-dog.gif" width="250" style="margin: 0 auto" />
+
 <!--
 - If you'd asked me what a GraphQL subscription is years back, I would've said it is just a query that streams.
 - And in a single-service world, sure, that is basically true.
@@ -150,10 +152,11 @@ One subscription drives it. The router queries other subgraphs per event to reso
 -->
 
 ---
-layout: section
+layout: statement
+zoom: 0.9
 ---
 
-# Why It's Harder Than It Looks
+# Why It's Harder Than It Looks?
 
 <!--
 - Now let's talk about why federated subscriptions are harder to build than they look on paper.
@@ -195,6 +198,8 @@ layout: two-cols-header
 - One stream out
 - Request lives, request dies
 
+<img src="/gifs/door-open-chauffeur.gif" width="340" style="margin-top: 2em" />
+
 ::right::
 
 ### Reality
@@ -202,6 +207,8 @@ layout: two-cols-header
 - Each event spawns subgraph queries
 - Streams outlive the request
 - WebSocket doesn't fit HTTP-shaped internals
+
+<img src="/gifs/door-broke.gif" width="250" style="margin-top: 2em" />
 
 <!--
 - The first version in your head is always simpler than the real thing.
@@ -328,11 +335,14 @@ websocket:
 
 ---
 layout: statement
+zoom: 0.9
 ---
 
-"Now keep the connection alive."
+# Now keep the connection alive
 
-heartbeats · backpressure · schema reloads · client disappears mid-flight
+heartbeats, backpressure, schema reloads, client disappears mid-flight
+
+<img src="/gifs/this-is-fine.gif" style="margin: 0 auto" width="250" />
 
 <!--
 - Negotiating the protocol is the easy part.
@@ -345,7 +355,7 @@ heartbeats · backpressure · schema reloads · client disappears mid-flight
 -->
 
 ---
-layout: section
+layout: statement
 ---
 
 # Entity Resolution Per Event
@@ -416,9 +426,10 @@ sequenceDiagram
 
 ---
 layout: statement
+zoom: 0.9
 ---
 
-"Every event is a mini query plan."
+# Every event is a mini query plan
 
 <!--
 - Simply put:
@@ -445,7 +456,8 @@ layout: statement
 -->
 
 ---
-layout: section
+layout: statement
+zoom: 0.7
 ---
 
 # WebSockets + Synthetic HTTP Requests
@@ -486,9 +498,10 @@ layout: two-cols-header
 
 ---
 layout: statement
+zoom: 0.7
 ---
 
-"WebSocket messages aren't HTTP requests."
+# WebSocket messages aren't HTTP requests
 
 No method. No path. No headers. No plugin pipeline.
 
@@ -500,9 +513,12 @@ No method. No path. No headers. No plugin pipeline.
 
 ---
 layout: statement
+zoom: 0.9
 ---
 
-"So we make them HTTP requests."
+# So we make them HTTP requests
+
+<img src="/gifs/einstein.gif" width="200" style="margin: 0 auto" />
 
 <!--
 - The answer is "no".
@@ -642,7 +658,8 @@ Once headers work over WS, you can ditch HTTP entirely.
 -->
 
 ---
-layout: section
+layout: statement
+zoom: 0.7
 ---
 
 # HTTP Callback: Flipping the Model
@@ -654,6 +671,7 @@ layout: section
 
 ---
 layout: fact
+zoom: 0.9
 ---
 
 # 10,000 subscriptions
@@ -757,11 +775,13 @@ subscriptions:
 -->
 
 ---
-layout: section
+layout: statement
 zoom: 0.9
 ---
 
 # One Broadcaster to Rule Them All
+
+<img src="/gifs/one-tree-to-rule.gif" width="150" style="margin: 0 auto" />
 
 <!--
 - Here's the architectural piece we're proud of.
@@ -861,10 +881,10 @@ subscriptions:
 -->
 
 ---
-layout: section
+layout: statement
 ---
 
-# Why Rust
+# Why Rust?
 
 <!--
 - Last technical section. I'm not going to sell you Rust, but I do want to be honest about what it bought us on this specific problem.
@@ -894,10 +914,10 @@ layout: section
 
 # Takeaways...
 
-- **A subscription is a relationship, not a request**
-- **Every event is a mini query plan**
-- **One pipeline beats two**
-- **One broadcaster decouples both sides**
+- A subscription is a relationship, not a request
+- Every event is a mini query plan
+- One pipeline beats two
+- One broadcaster decouples both sides
 
 <!--
 - A few things to take with you.
@@ -911,10 +931,10 @@ layout: section
 
 # ...More Takeaways
 
-- **Deduplication is free real estate**
-- **Backpressure has one home**
-- **HTTP Callback is the scale answer**
-- **Hive Router is the most performant federation router - for queries and for subscriptions**
+- Deduplication is free real estate
+- Backpressure has one home
+- HTTP Callback is the scale answer
+- Hive Router is the most performant federation router - for queries and for subscriptions
 
 <!--
 - Subscription deduplication is essentially free real estate once the broadcaster is in place. One upstream connection can serve a lot of identical clients, and your subgraphs feel it.
@@ -972,5 +992,4 @@ Questions?
 TODO: add some gifs or something, some animations
 TODO: also show how deduplication looks like maybe? info chart or something
 TODO: see slack messages
-TODO: booth app qr code
 -->
