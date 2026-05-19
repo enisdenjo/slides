@@ -33,7 +33,7 @@ I work at The Guild, the team behind your GraphQL tooling
 - [`@enisdenjo`](https://github.com/enisdenjo) everywhere
 - [the-guild.dev](https://the-guild.dev/)
 - Software Developer
-- GraphQL TSC Emeriti
+- GraphQL TSC emeritus
 - GraphQL over HTTP ref. implementation (graphql-http)
 - GraphQL over WebSocket spec and ref. implementation (graphql-ws) author
 - GraphQL over SSE spec and ref. implementation (graphql-sse) author
