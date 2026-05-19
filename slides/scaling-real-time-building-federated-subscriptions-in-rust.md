@@ -910,6 +910,8 @@ layout: statement
 
 # Why Rust?
 
+<img src="/gifs/wd40.gif" style="margin: 0 auto" width="200" />
+
 <!--
 - Last technical section. I'm not going to sell you Rust, but I do want to be honest about what it bought us on this specific problem.
 -->
