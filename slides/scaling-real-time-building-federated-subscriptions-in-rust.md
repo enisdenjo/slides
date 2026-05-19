@@ -109,7 +109,7 @@ layout: section
 zoom: 0.8
 ---
 
-# Subscriptions are just streaming queries.
+# Subscriptions are just streaming queries
 
 ...right?
 
@@ -255,13 +255,13 @@ layout: section
 - SSE
 - Incremental Delivery (multipart)
 - Apollo Multipart HTTP
-- WebSockets
+- WebSockets \*
 - HTTP Callback \*\*
 
 That is three HTTP streaming variants, plus WebSocket, plus callback.
 
-<sub>\** HTTP Callback is router-to-subgraph only - it is a subgraph push protocol, not a client one.</sub><br/>
-<sub>*Except `subscriptions-transport-ws` - deprecated since 2023, unmaintained since 2018. Use `graphql-ws`.</sub>
+<sub>*Except `subscriptions-transport-ws` - deprecated since 2023, unmaintained since 2018. Use `graphql-ws`.</sub><br/>
+<sub>\**HTTP Callback is router-to-subgraph only - it is a subgraph push protocol, not a client one.</sub>
 
 <!--
 - These are every subscription protocol in serious use today. SSE, Incremental Delivery, Apollo's Multipart HTTP, WebSockets, and HTTP Callback.
