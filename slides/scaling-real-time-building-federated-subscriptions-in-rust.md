@@ -80,7 +80,7 @@ Questions are welcome at any point - just raise your hand...
 <!--
 - Remember!
 - Interrupting is fine, ask right away if something is unclear.
-- There is also the Booth App if you prefer typing your question.
+- There is also the Booth App if you prefer typing your question - just scan the QR.
 - I will read your comments at the end of my talk.
 -->
 
