@@ -470,7 +470,7 @@ We did not build a parallel WebSocket pipeline. We built **one pipeline**, and g
 - A few concrete things this design buys us.
 - One pipeline for two transports. We don't have a WebSocket auth plugin and an HTTP auth plugin. There's just an auth plugin.
 - Every new plugin we add works on WebSocket the day it ships. We don't have to remember to wire it up twice.
-- One fingerprint space for deduplication. A subscription, or an inflight request, that came in over WebSocket can be deduplicated with the same operation that came in over SSE. They all look the same to the rest of the router.
+- One fingerprint space for deduplication. A subscription, or an inflight request, that came in over WebSocket can be deduplicated with the same operation that came in over HTTP. They all look the same to the rest of the router.
 - And when something goes wrong at three in the morning, you have one mental model. It's all just a request. The WebSocket part stops mattering really quickly.
 -->
 
