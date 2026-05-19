@@ -846,12 +846,15 @@ layout: section
 - A runtime tuned for many idle connections with occasional bursts - exactly the shape of subscriptions
 - Strict ownership rules forced us to get the lifetime story right before runtime did
 
+**Hive Router is the most performant GraphQL federation router - including subscriptions.**
+
 <!--
 - Four things Rust gave us on this project.
 - Predictable memory. There's no garbage collector pausing a fanout at the wrong moment when an event needs to go out to a lot of streams.
 - Cheap shared ownership. The same schema, the same query plan, the same headers get shared across every active subscription stream without copying.
 - The async runtime we use is tuned for the exact shape of this workload. Many connections that are mostly idle, with occasional bursts of activity. That's exactly what subscriptions look like.
 - And the borrow checker. The fact that subscription streams outlive the request is easy in any other language. In Rust, it stopped us at compile time and forced us to design the ownership story up front.
+- The result of all of this: Hive Router is the most performant GraphQL federation router out there. That is true for queries and mutations. And it is true for subscriptions too.
 -->
 
 ---
@@ -878,11 +881,13 @@ layout: section
 - **Deduplication is free real estate**
 - **Backpressure has one home**
 - **HTTP Callback is the scale answer**
+- **Hive Router is the most performant federation router - for queries and for subscriptions**
 
 <!--
 - Subscription deduplication is essentially free real estate once the broadcaster is in place. One upstream connection can serve a lot of identical clients, and your subgraphs feel it.
 - Backpressure has exactly one home. Executors push, the broadcaster does the buffering and the dropping, slow clients can't poison the upstream or the other consumers.
-- And HTTP Callback is the answer when you grow into really high subscription counts. Flip the connection model and stop paying for a persistent connection per subscription.
+- HTTP Callback is the answer when you grow into really high subscription counts. Flip the connection model and stop paying for a persistent connection per subscription.
+- And Hive Router is the most performant federation router. Not just for queries. For subscriptions too. That is the direct result of every architectural decision we just walked through.
 -->
 
 ---
@@ -891,9 +896,36 @@ layout: end
 
 # Thank You
 
-Hive Router is open source - [the-guild.dev/graphql/hive](https://the-guild.dev/graphql/hive)
-
 Questions?
+
+<div style="display: flex; gap: 1em">
+  <div>
+    <span>Hive Router is open source!</span>
+    <div style="display: flex; justify-content: center; margin-top: 1em">
+      <QRCode
+        :width="150"
+        :height="150"
+        type="svg"
+        data="https://the-guild.dev/graphql/hive/docs/router"
+        :dotsOptions="{ color: '#121212' }"
+        :backgroundOptions="{ color: 'white' }"
+      />
+    </div>
+  </div>
+  <div>
+    <span>React and post on the Booth App!</span>
+    <div style="display: flex; justify-content: center; margin-top: 1em">
+      <QRCode
+        :width="150"
+        :height="150"
+        type="svg"
+        data="https://booth.the-guild.dev"
+        :dotsOptions="{ color: '#121212' }"
+        :backgroundOptions="{ color: 'white' }"
+      />
+    </div>
+  </div>
+</div>
 
 <!--
 - That's it. Hive Router is open source.
