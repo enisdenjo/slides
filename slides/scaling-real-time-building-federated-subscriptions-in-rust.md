@@ -24,22 +24,32 @@ Denis from **The Guild**
 
 I work at The Guild, the team behind your GraphQL tooling
 
-<img src="/denis.jpg" alt="Denis" width="100" style="border-radius: 10px" />
+<img src="/denis-tune.png" alt="Denis" width="100" style="border-radius: 10px; border: 1px solid gray" />
 
 <br/>
 
 ## Denis
 
-- [`@enisdenjo`](https://github.com/enisdenjo)
+- [`@enisdenjo`](https://github.com/enisdenjo) everywhere
 - [the-guild.dev](https://the-guild.dev/)
 - Software Developer
+- GraphQL TSC Emeriti
+- GraphQL over HTTP ref. implementation (graphql-http)
+- GraphQL over WebSocket spec and ref. implementation (graphql-ws) author
+- GraphQL over SSE spec and ref. implementation (graphql-sse) author
 
 <!--
 - But before all that,
 - Let me start by introducing the company behind the tools you probably use
 - The Guild build open-source GraphQL tools that power thousands of applications
 - We're passionate about federation, gateways and making GraphQL better for everyone!
-- and I'm Denis, from The Guild
+- and I'm Denis, software developer at The Guild.
+- You've probably used something I built without knowing it.
+- graphql-ws library and the WebSocket protocol most GraphQL clients speak today.
+- graphql-sse is the SSE spec and reference implementation for GraphQL.
+- graphql-http is the reference implementation for the GraphQL over HTTP spec.
+- I'm also a GraphQL TSC emeritus, meaning I've been part of the committee that shapes the GraphQL over HTTP spec.
+- You can find me everywhere using that handle.
 -->
 
 ---
