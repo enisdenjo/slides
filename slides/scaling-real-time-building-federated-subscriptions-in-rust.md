@@ -105,11 +105,11 @@ Questions are welcome at any point - just raise your hand...
 -->
 
 ---
-layout: section
-zoom: 0.8
+layout: statement
+zoom: 0.7
 ---
 
-# Subscriptions are just streaming queries
+# Subscriptions are just streaming queries...
 
 ...right?
 
@@ -172,7 +172,7 @@ One subscription drives it. The router queries other subgraphs per event to reso
 -->
 
 ---
-layout: statement
+layout: section
 zoom: 0.9
 ---
 
@@ -354,7 +354,7 @@ websocket:
 -->
 
 ---
-layout: statement
+layout: section
 zoom: 0.9
 ---
 
@@ -362,7 +362,7 @@ zoom: 0.9
 
 heartbeats, backpressure, schema reloads, client disappears mid-flight
 
-<img src="/gifs/this-is-fine.gif" style="margin: 0 auto" width="250" />
+<img src="/gifs/ok-right.gif" style="margin: 0 auto" width="250" />
 
 <!--
 - Negotiating the protocol is the easy part.
@@ -375,7 +375,7 @@ heartbeats, backpressure, schema reloads, client disappears mid-flight
 -->
 
 ---
-layout: statement
+layout: section
 ---
 
 # Entity Resolution Per Event
@@ -445,7 +445,7 @@ sequenceDiagram
 -->
 
 ---
-layout: statement
+layout: section
 zoom: 0.9
 ---
 
@@ -476,7 +476,7 @@ zoom: 0.9
 -->
 
 ---
-layout: statement
+layout: section
 zoom: 0.7
 ---
 
@@ -507,6 +507,10 @@ layout: two-cols-header
 - 1 connection = N operations
 - Queries, mutations, subscriptions, all multiplexed
 - Router fans out to dedicated subgraph connections
+
+<div style="position: absolute; left: 0; width: 100%">
+  <img src="/gifs/dark-peter.gif" width="250"  style="margin: 0 auto; margin-top: 1em" />
+</div>
 
 <!--
 - WebSocket is a different beast.
