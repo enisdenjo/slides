@@ -53,10 +53,38 @@ I work at The Guild, the team behind your GraphQL tooling
 -->
 
 ---
-layout: center
+layout: two-cols-header
 ---
 
-# "Subscriptions are just streaming queries."
+# Ask Questions!
+
+::left::
+
+TODO: stop raise hand, scream, funny short
+
+::right::
+
+...or use the Booth App and post your questions, I will read them at the end of the talk.
+
+<QRCode
+  :width="250"
+  :height="250"
+  type="svg"
+  data="https://booth.the-guild.dev/agenda/j97712518m61nzj2vqrdjttq3h856jzd"
+  :dotsOptions="{ color: '#121212' }"
+  :backgroundOptions="{ color: 'white' }"
+/>
+
+<!--
+TODO: notes
+-->
+
+---
+layout: section
+zoom: 0.8
+---
+
+# Subscriptions are just streaming queries.
 
 ...right?
 
