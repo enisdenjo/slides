@@ -39,7 +39,6 @@ I work at The Guild, the team behind your GraphQL tooling
 - GraphQL over SSE spec and ref. implementation (graphql-sse) author
 
 <!--
-- But before all that,
 - Let me start by introducing the company behind the tools you probably use
 - The Guild build open-source GraphQL tools that power thousands of applications
 - We're passionate about federation, gateways and making GraphQL better for everyone!
@@ -50,6 +49,27 @@ I work at The Guild, the team behind your GraphQL tooling
 - graphql-http is the reference implementation for the GraphQL over HTTP spec.
 - I'm also a GraphQL TSC emeritus, meaning I've been part of the committee that shapes the GraphQL over HTTP spec.
 - You can find me everywhere using that handle.
+-->
+
+---
+
+# Our Picks
+
+These are the talks The Guild recommends. Scan to see our full list.
+
+<QRCode
+  :width="250"
+  :height="250"
+  type="svg"
+  data="https://booth.the-guild.dev/agenda?tab=featured"
+  :dotsOptions="{ color: '#121212' }"
+  :backgroundOptions="{ color: 'white' }"
+/>
+
+<!--
+- Before we start, a quick note on our picks.
+- The Guild has flagged a handful of talks at this conference we think are worth your time.
+- Scan the QR code to see them in the Booth App.
 -->
 
 ---
