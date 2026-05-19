@@ -60,7 +60,9 @@ layout: two-cols-header
 
 ::left::
 
-TODO: stop raise hand, scream, funny short
+Questions are welcome at any point - just raise your hand...
+
+<img src="/gifs/raise-hand.gif" width="300" />
 
 ::right::
 
@@ -76,7 +78,10 @@ TODO: stop raise hand, scream, funny short
 />
 
 <!--
-TODO: notes
+- Remember!
+- Interrupting is fine, ask right away if something is unclear.
+- There is also the Booth App if you prefer typing your question.
+- I will read your comments at the end of my talk.
 -->
 
 ---
